@@ -12,7 +12,7 @@
 #>
 
 # ===== CONFIGURAÇÃO =====
-$url        = "https://github.com/capimmm/7834569"  # Troque pela URL que quiser
+$url        = "xvideo.com"  # Troque pela URL que quiser
 $quantidade = 10                                    # Quantas vezes abrir
 # ========================
 
